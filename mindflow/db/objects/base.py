@@ -13,7 +13,7 @@ class BaseObject:
 
     def __init__(self, id: Union[str, dict]):
         if isinstance(id, dict):
-            if not "id" in id:
+            if "id" not in id:
                 raise ValueError("id is required")
             for key, value in id.items():
                 setattr(self, key, value)
@@ -21,14 +21,11 @@ class BaseObject:
             self.id = id
 
     @classmethod
-    def load(self, id: str, return_none=True):
-        object_dict: Optional[dict] = self._database.load(self._collection.value, id)
+    def load(cls, id: str, return_none=True):
+        object_dict: Optional[dict] = cls._database.load(cls._collection.value, id)
         if object_dict is None:
-            if return_none:
-                return None
-            return self(id)
-
-        return self(object_dict)
+            return None if return_none else cls(id)
+        return cls(object_dict)
 
     @classmethod
     def load_bulk(cls, ids: list, return_none=True) -> List:
@@ -61,10 +58,7 @@ class BaseObject:
 
     def todict(self, obj, classkey=None):
         if isinstance(obj, dict):
-            data = {}
-            for k, v in obj.items():
-                data[k] = self.todict(v, classkey)
-            return data
+            return {k: self.todict(v, classkey) for k, v in obj.items()}
         elif hasattr(obj, "_ast"):
             return self.todict(obj._ast(), classkey)
         elif hasattr(obj, "__iter__") and not isinstance(obj, str):

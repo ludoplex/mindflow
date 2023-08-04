@@ -18,19 +18,18 @@ def get_batch_token_count(model: ConfiguredModel, texts: List[str]) -> int:
     This function is used to get the token count of a list of strings.
     """
     try:
-        return sum([len(encoding) for encoding in model.tokenizer.encode_batch(texts)])
+        return sum(len(encoding) for encoding in model.tokenizer.encode_batch(texts))
     except Exception:
-        return sum([len(text) // 3 for text in texts])
+        return sum(len(text) // 3 for text in texts)
 
 
 def estimate_tokens_from_messages(
     messages: List[Dict[str, str]],
     model: ConfiguredModel,
 ):
-    content = ""
-    for i in range(len(messages)):
-        content += f"{messages[i]['role']}\n\n {messages[i]['content']}"
-
+    content = "".join(
+        f"{message['role']}\n\n {message['content']}" for message in messages
+    )
     return get_token_count(model, content)
 
 
@@ -54,6 +53,4 @@ def estimate_tokens_from_paths(
         texts.append(text)
 
     tokens = get_batch_token_count(model, texts)
-    if return_texts:
-        return tokens, texts
-    return tokens
+    return (tokens, texts) if return_texts else tokens

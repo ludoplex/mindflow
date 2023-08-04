@@ -92,7 +92,7 @@ def get_document_chunk_ids(documents: Union[List[Document], Document]):
         documents = [documents]
 
     ## Get total number of chunks and create a list of chunk ids
-    total_chunks = sum([document.num_chunks + 1 for document in documents])
+    total_chunks = sum(document.num_chunks + 1 for document in documents)
     document_chunk_ids = [""] * int(total_chunks)
     j = 0
     for document in documents:

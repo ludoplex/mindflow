@@ -31,29 +31,25 @@ def build_prompt(
 ) -> Union[List[Dict], str]:
     if model.service == ServiceID.OPENAI.value:
         return messages
-    else:
-        full_prompt: str = ""
-        for message in messages:
-            role = message["role"]
-            prompt = message["content"]
+    full_prompt: str = ""
+    for message in messages:
+        role = message["role"]
+        prompt = message["content"]
 
-            if role == Role.SYSTEM.value:
-                full_prompt += anthropic.HUMAN_PROMPT
-                full_prompt += prompt
-                full_prompt += (
-                    anthropic.AI_PROMPT
-                    + " Sure! I will respond to all following messages with a response like you have just outlined for me."
-                )
-            elif role == Role.USER.value:
-                full_prompt += anthropic.HUMAN_PROMPT
-                full_prompt += prompt
-            elif role == Role.ASSISTANT.value:
-                full_prompt += anthropic.AI_PROMPT
-                full_prompt += prompt
+        if role == Role.SYSTEM.value:
+            full_prompt += anthropic.HUMAN_PROMPT
+            full_prompt += prompt
+            full_prompt += f"{anthropic.AI_PROMPT} Sure! I will respond to all following messages with a response like you have just outlined for me."
+        elif role == Role.USER.value:
+            full_prompt += anthropic.HUMAN_PROMPT
+            full_prompt += prompt
+        elif role == Role.ASSISTANT.value:
+            full_prompt += anthropic.AI_PROMPT
+            full_prompt += prompt
 
-        full_prompt += anthropic.AI_PROMPT
+    full_prompt += anthropic.AI_PROMPT
 
-        return full_prompt
+    return full_prompt
 
 
 def prune_messages(

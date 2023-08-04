@@ -12,8 +12,7 @@ def get_mindflow_dir():
         config_dir = os.getenv("APPDATA")
     else:
         config_dir = os.path.join(os.path.expanduser("~"), ".config")
-    mindflow_dir = os.path.join(config_dir, "mindflow")
-    return mindflow_dir
+    return os.path.join(config_dir, "mindflow")
 
 
 MINDFLOW_DIR = get_mindflow_dir()
@@ -39,24 +38,19 @@ class JsonDatabase(Database):
 
     def load(self, collection: str, object_id: str) -> Optional[dict]:
         objects = self.collections.get(collection, None)
-        if not objects:
-            return None
-
-        return objects.get(object_id, None)
+        return None if not objects else objects.get(object_id, None)
 
     def load_bulk(self, collection: str, object_ids: List[str]) -> List[Optional[dict]]:
-        objects = self.collections.get(collection, None)
-        if not objects:
+        if objects := self.collections.get(collection, None):
+            return [objects.get(object_id, None) for object_id in object_ids]
+        else:
             return []
 
-        return [objects.get(object_id, None) for object_id in object_ids]
-
     def delete(self, collection: str, object_id: str):
-        objects = self.collections.get(collection, None)
-        if not objects:
+        if objects := self.collections.get(collection, None):
+            objects.pop(object_id, None)
+        else:
             return None
-
-        objects.pop(object_id, None)
 
     def delete_bulk(self, collection: str, object_ids: List[str]):
         objects = self.collections.get(collection, None)
@@ -71,11 +65,10 @@ class JsonDatabase(Database):
         if objects == {}:
             self.collections[collection] = objects
 
-        object_id = value.get("id", None)
-        if not object_id:
+        if object_id := value.get("id", None):
+            objects[object_id] = value
+        else:
             raise ValueError("No ID found in object")
-
-        objects[object_id] = value
 
     def save_bulk(self, collection: str, values: List[dict]):
         objects = self.collections.get(collection, {})
@@ -83,11 +76,10 @@ class JsonDatabase(Database):
             self.collections[collection] = objects
 
         for value in values:
-            object_id = value.get("id", None)
-            if not object_id:
+            if object_id := value.get("id", None):
+                objects[object_id] = value
+            else:
                 raise ValueError("No ID found in object")
-
-            objects[object_id] = value
 
     def save_file(self):
         with open(JSON_DATABASE_PATH, "w", encoding="utf-8") as json_file:

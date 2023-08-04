@@ -10,7 +10,7 @@ def print_total_size(document_references: List[Document]):
     Print total size of documents
     """
     total_size = sum(
-        [document_reference.size for document_reference in document_references]
+        document_reference.size for document_reference in document_references
     )
     print(f"Total content size: MB {total_size / 1024 / 1024:.2f}")
 
@@ -23,7 +23,7 @@ def print_total_tokens_and_ask_to_continue(
     """
     Print total tokens of documents
     """
-    total_tokens = sum([document.tokens for document in documents])
+    total_tokens = sum(document.tokens for document in documents)
     print(f"Total tokens: {total_tokens}")
     total_cost_usd: float = (
         total_tokens / float(completion_model.token_cost_unit)
