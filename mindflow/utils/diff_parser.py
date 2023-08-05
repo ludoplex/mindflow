@@ -55,10 +55,8 @@ def parse_git_diff(diff_str: str):
                 continue
 
             current_diff = [line]
-        else:
-            # skip lines if we are ignoring this file (TODO - this is a bit hacky)
-            if current_file:
-                current_diff.append(line)
+        elif current_file:
+            current_diff.append(line)
 
     # Add the last diff to the dictionary
     if current_file:

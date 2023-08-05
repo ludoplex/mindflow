@@ -53,7 +53,7 @@ def run_query(document_paths: List[str], query: str):
         for document_chunk in top_document_chunks
     ]
 
-    if len(top_document_chunks) == 0:
+    if not top_document_chunks:
         print(
             "No index for requested hashes. Please generate index for passed content."
         )
@@ -72,10 +72,7 @@ def run_query(document_paths: List[str], query: str):
             completion_model,
         )
     )
-    if isinstance(response, ModelError):
-        return response.query_message
-
-    return response
+    return response.query_message if isinstance(response, ModelError) else response
 
 
 def select_content(

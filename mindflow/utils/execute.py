@@ -10,7 +10,4 @@ def execute_no_trace(command: List[str]) -> str:
     # Execute the command and retrieve the output as a string
     output = subprocess.Popen(command, stdout=subprocess.PIPE)
 
-    # Capture the output and decode it
-    console_output = output.communicate()[0].decode("utf-8")
-
-    return console_output
+    return output.communicate()[0].decode("utf-8")

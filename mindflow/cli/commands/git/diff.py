@@ -20,5 +20,3 @@ def diff(args: Tuple[str], detailed: bool):
     diff_output = run_diff(args, detailed=detailed)
     if diff_output is not None:
         click.echo(diff_output)
-    else:
-        pass

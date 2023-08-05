@@ -26,7 +26,7 @@ def run_delete(document_paths: List[str]):
         if document_id is not None
     ]
     documents: List[Document] = Document.load_bulk(document_ids, return_none=False)
-    if len(documents) == 0:
+    if not documents:
         return "No documents to delete"
 
     document_chunk_ids = get_document_chunk_ids(documents)
@@ -34,7 +34,7 @@ def run_delete(document_paths: List[str]):
         document_chunk_ids,
         return_none=True,
     )
-    if len(document_chunks) == 0:
+    if not document_chunks:
         return "No documents to delete"
 
     Document.delete_bulk(document_ids)

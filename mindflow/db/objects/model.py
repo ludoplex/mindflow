@@ -132,14 +132,13 @@ class ConfiguredModel(Callable):
         while try_count < 5:
             try:
                 client = anthropic.Client(self.api_key)
-                response = client.completion(
+                return client.completion(
                     prompt=prompt,
                     stop_sequences=[],
                     model=self.id,
                     max_tokens_to_sample=max_tokens,
                     temperature=temperature,
                 )["completion"]
-                return response
             except Exception as e:
                 try_count += 1
                 error_message = f"Error: {str(e)}"

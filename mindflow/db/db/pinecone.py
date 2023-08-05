@@ -51,11 +51,10 @@ class PineconeDatabase(Database):
 
     def load(self, collection: str, object_id: str) -> Optional[dict]:
         index = self._get_index(collection)
-        object = index.fetch(ids=[object_id])
-        if not object:
+        if object := index.fetch(ids=[object_id]):
+            return self._convert_pinecone_return(object["matches"][0])
+        else:
             return {}
-
-        return self._convert_pinecone_return(object["matches"][0])
 
     def load_bulk(self, collection: str, object_ids: List[str]) -> List[Optional[dict]]:
         index = self._get_index(collection)

@@ -294,9 +294,7 @@ def create_tree(nodes: List[T], completion_model: ConfiguredModel) -> Node:
     )
 
     parent_id = f"parent_{left_tree.id.split('_')[1]}_{right_tree.id.split('_')[1]}"
-    parent_node = Node(parent_id, merged_summary, [left_tree, right_tree])
-
-    return parent_node
+    return Node(parent_id, merged_summary, [left_tree, right_tree])
 
 
 def collect_leaves_with_embeddings(

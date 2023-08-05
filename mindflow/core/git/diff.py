@@ -42,9 +42,10 @@ def run_diff(args: Tuple[str], detailed: bool = True) -> Optional[str]:
 
     diff_summary: str = ""
     if len(batched_parsed_diff_result) == 1:
-        content = ""
-        for file_name, diff_content in batched_parsed_diff_result[0]:
-            content += f"*{file_name}*\n DIFF CONTENT: {diff_content}\n\n"
+        content = "".join(
+            f"*{file_name}*\n DIFF CONTENT: {diff_content}\n\n"
+            for file_name, diff_content in batched_parsed_diff_result[0]
+        )
         diff_response: Union[ModelError, str] = completion_model(
             build_prompt(
                 [
@@ -61,9 +62,10 @@ def run_diff(args: Tuple[str], detailed: bool = True) -> Optional[str]:
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
             for batch in batched_parsed_diff_result:
-                content = ""
-                for file_name, diff_content in batch:
-                    content += f"*{file_name}*\n DIFF CONTENT: {diff_content}\n\n"
+                content = "".join(
+                    f"*{file_name}*\n DIFF CONTENT: {diff_content}\n\n"
+                    for file_name, diff_content in batch
+                )
                 future: concurrent.futures.Future = executor.submit(
                     completion_model,
                     build_prompt(
@@ -91,7 +93,7 @@ def run_diff(args: Tuple[str], detailed: bool = True) -> Optional[str]:
         return diff_summary
 
     GIT_DIFF_SUMMARIZE_PROMPT = 'What is the higher level purpose of these changes? Keep it short and sweet, don\'t provide any useless or redundant information like "made changes to the code". Do NOT speak in generalities, be specific.'
-    summarized = completion_model(
+    return completion_model(
         build_prompt(
             [
                 create_message(Role.SYSTEM.value, GIT_DIFF_SUMMARIZE_PROMPT),
@@ -100,7 +102,6 @@ def run_diff(args: Tuple[str], detailed: bool = True) -> Optional[str]:
             completion_model,
         )
     )
-    return summarized
 
 
 import re

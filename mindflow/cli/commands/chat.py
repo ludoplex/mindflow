@@ -19,13 +19,7 @@ def _parse_chat_prompt_args(prompt_args: Tuple[str]):
     # those filenames/directories will be ignored and treated as plain text.
 
     prompt = " ".join(prompt_args)  # include files/directories in prompt
-    paths = []
-
-    for arg in prompt_args:
-        # check if valid path string
-        if os.path.exists(arg):
-            paths.append(arg)
-
+    paths = [arg for arg in prompt_args if os.path.exists(arg)]
     return prompt, paths
 
 
@@ -37,13 +31,7 @@ def _parse_chat_prompt_args(prompt_args: Tuple[str]):
 def chat(prompt_args: Tuple[str], skip_index: bool):
     prompt, paths = _parse_chat_prompt_args(prompt_args)
 
-    # if paths:
-    has_dirs = False
-    for path in paths:
-        if os.path.isdir(path):
-            has_dirs = True
-            break
-
+    has_dirs = any(os.path.isdir(path) for path in paths)
     if has_dirs:
         if skip_index:
             click.echo(
